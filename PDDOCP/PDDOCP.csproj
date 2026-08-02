@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -70,8 +70,44 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Login.aspx" />
+    <Content Include="Register.aspx" />
+    <Content Include="ManageActivity.aspx" />
+    <Content Include="ManageGoal.aspx" />
+    <Content Include="ManageProgress.aspx" />
+    <Content Include="App_Data\fittrack.mdf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Code\ActivityMetric.cs" />
+    <Compile Include="App_Code\ActivityType.cs" />
+    <Compile Include="App_Code\CalorieCalculator.cs" />
+    <Compile Include="App_Code\Data.cs" />
+    <Compile Include="App_Code\DBHelper.cs" />
+    <Compile Include="App_Code\FitnessGoal.cs" />
+    <Compile Include="App_Code\Member.cs" />
+    <Compile Include="App_Code\MetricType.cs" />
+    <Compile Include="App_Code\WorkoutSession.cs" />
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Register.aspx.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ManageActivity.aspx.cs">
+      <DependentUpon>ManageActivity.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ManageGoal.aspx.cs">
+      <DependentUpon>ManageGoal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ManageProgress.aspx.cs">
+      <DependentUpon>ManageProgress.aspx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
