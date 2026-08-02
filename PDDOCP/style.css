@@ -1,0 +1,15 @@
+/* Shared layout for every Web Forms page. Flexbox centers the page and Grid organises forms neatly. */
+body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #eef4f8; color: #1f2937; }
+.page-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 30px; }
+.card { width: min(980px, 100%); background: white; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.12); padding: 28px; }
+.nav { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+.nav a, input[type=submit] { background: #2563eb; color: white; border: 0; border-radius: 8px; padding: 10px 14px; text-decoration: none; cursor: pointer; }
+.nav a:hover, input[type=submit]:hover { background: #1d4ed8; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin: 18px 0; }
+.field { display: flex; flex-direction: column; gap: 6px; font-weight: bold; }
+input[type=text], input[type=password], select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+.message { display: block; margin-top: 12px; font-weight: bold; }
+.status { display: inline-block; margin: 12px 0; padding: 10px 14px; border-radius: 8px; background: #fef3c7; font-weight: bold; }
+table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
+th { background: #dbeafe; }

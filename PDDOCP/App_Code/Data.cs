@@ -1,36 +1,38 @@
-using System.Collections.Generic;
+using System.Threading;
 
+// This static class follows the simple lecture style for storing failed login attempts.
+// Static variables keep their values while the web application is running.
 public class Data
 {
-    private static Dictionary<string, int> failedAttempts = new Dictionary<string, int>();
-    private static Dictionary<string, System.DateTime> lockedUntil = new Dictionary<string, System.DateTime>();
+    private static int failedLoginCount = 0;
+    private static string lastFailedUser = "";
 
-    public static int getFailedAttempts(string name)
+    public static int getFailedLoginCount()
     {
-        if (failedAttempts.ContainsKey(name)) return failedAttempts[name];
-        return 0;
+        return failedLoginCount;
     }
 
     public static void addFailedAttempt(string name)
     {
-        if (!failedAttempts.ContainsKey(name)) failedAttempts[name] = 0;
-        failedAttempts[name] = failedAttempts[name] + 1;
-        if (failedAttempts[name] >= 3) lockedUntil[name] = System.DateTime.Now.AddMinutes(1);
-    }
-
-    public static void clearFailedAttempt(string name)
-    {
-        if (failedAttempts.ContainsKey(name)) failedAttempts.Remove(name);
-        if (lockedUntil.ContainsKey(name)) lockedUntil.Remove(name);
-    }
-
-    public static bool isLocked(string name)
-    {
-        if (lockedUntil.ContainsKey(name))
+        // If a different user tries to login, begin counting again for that username.
+        if (lastFailedUser != name)
         {
-            if (System.DateTime.Now < lockedUntil[name]) return true;
-            clearFailedAttempt(name);
+            lastFailedUser = name;
+            failedLoginCount = 0;
         }
-        return false;
+
+        failedLoginCount = failedLoginCount + 1;
+
+        // Video 3 style lockout: pause the request after three failed attempts.
+        if (failedLoginCount >= 3)
+        {
+            Thread.Sleep(3000);
+        }
+    }
+
+    public static void clearFailedAttempt()
+    {
+        failedLoginCount = 0;
+        lastFailedUser = "";
     }
 }

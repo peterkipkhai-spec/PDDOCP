@@ -75,7 +75,10 @@
     <Content Include="ManageActivity.aspx" />
     <Content Include="ManageGoal.aspx" />
     <Content Include="ManageProgress.aspx" />
+    <Content Include="Default.aspx" />
+    <Content Include="style.css" />
     <Content Include="App_Data\fittrack.mdf" />
+    <Content Include="App_Data\SeedData.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -105,6 +108,9 @@
     </Compile>
     <Compile Include="ManageProgress.aspx.cs">
       <DependentUpon>ManageProgress.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
 

@@ -16,20 +16,23 @@ namespace PDDOCP
             {
                 string name = txtName.Text.Trim();
                 string password = txtPassword.Text.Trim();
-                if (Data.isLocked(name)) { lblMessage.Text = "Account locked. Please wait 1 minute."; return; }
+
+                // Ask DBHelper to check the username and password using a parameterized query.
                 DBHelper db = new DBHelper();
                 Member member = db.loginMember(name, password);
                 if (member != null)
                 {
-                    Data.clearFailedAttempt(name);
+                    // Successful login resets the static failed counter and stores the member id in Session.
+                    Data.clearFailedAttempt();
                     Session["mId"] = member.getMId();
                     Session["name"] = member.getName();
                     Response.Redirect("ManageProgress.aspx");
                 }
                 else
                 {
+                    // Failed attempts are tracked in Data. After 3 attempts Data pauses for 3 seconds.
                     Data.addFailedAttempt(name);
-                    lblMessage.Text = "Invalid login. Failed attempts: " + Data.getFailedAttempts(name);
+                    lblMessage.Text = "Invalid login. Failed attempts: " + Data.getFailedLoginCount();
                 }
             }
             catch (Exception ex) { lblMessage.Text = ex.Message; }

@@ -3,6 +3,8 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
+// DBHelper keeps all database work in one place so the pages stay easy to read.
+// Every INSERT/SELECT that receives user input uses parameters to reduce SQL injection risk.
 public class DBHelper
 {
     private SqlConnection con;
@@ -143,12 +145,13 @@ public class DBHelper
 
     public int insertWorkoutSession(WorkoutSession session)
     {
-        return executeNonQuery("INSERT INTO WorkoutSession(activityMetricId, memberId, recordedValue, sessionDate) VALUES(@activityMetricId, @memberId, @recordedValue, @sessionDate)", new string[] { "@activityMetricId", "@memberId", "@recordedValue", "@sessionDate" }, new object[] { session.getActivityMetricId(), session.getMemberId(), session.getRecordedValue(), session.getSessionDate() });
+        // Store all three raw values as well as the calculated calories, matching the updated schema.
+        return executeNonQuery("INSERT INTO WorkoutSession(activityMetricId, memberId, value1, value2, value3, caloriesBurned, sessionDate) VALUES(@activityMetricId, @memberId, @value1, @value2, @value3, @caloriesBurned, @sessionDate)", new string[] { "@activityMetricId", "@memberId", "@value1", "@value2", "@value3", "@caloriesBurned", "@sessionDate" }, new object[] { session.getActivityMetricId(), session.getMemberId(), session.getValue1(), session.getValue2(), session.getValue3(), session.getCaloriesBurned(), session.getSessionDate() });
     }
 
     public DataTable getProgressByMember(int memberId)
     {
-        return getTableWithMember("SELECT ws.sessionId, at.activityName, mt.metricName, ws.recordedValue, ws.sessionDate FROM WorkoutSession ws INNER JOIN ActivityMetric am ON ws.activityMetricId=am.activityMetricId INNER JOIN ActivityType at ON am.activityId=at.activityId INNER JOIN MetricType mt ON am.metricId=mt.metricId WHERE ws.memberId=@memberId ORDER BY ws.sessionDate DESC", memberId);
+        return getTableWithMember("SELECT ws.sessionId, at.activityName, mt.metricName, ws.value1, ws.value2, ws.value3, ws.caloriesBurned, ws.sessionDate FROM WorkoutSession ws INNER JOIN ActivityMetric am ON ws.activityMetricId=am.activityMetricId INNER JOIN ActivityType at ON am.activityId=at.activityId INNER JOIN MetricType mt ON am.metricId=mt.metricId WHERE ws.memberId=@memberId ORDER BY ws.sessionDate DESC", memberId);
     }
 
     public double getTotalCaloriesByMember(int memberId)
@@ -156,12 +159,28 @@ public class DBHelper
         try
         {
             openConnection();
-            string query = "SELECT ISNULL(SUM(recordedValue),0) FROM WorkoutSession WHERE memberId=@memberId";
+            string query = "SELECT ISNULL(SUM(caloriesBurned),0) FROM WorkoutSession WHERE memberId=@memberId";
             SqlCommand cmd = new SqlCommand(query, con);
             cmd.Parameters.AddWithValue("@memberId", memberId);
             return Convert.ToDouble(cmd.ExecuteScalar());
         }
         catch (Exception ex) { throw new Exception("Total calories error: " + ex.Message); }
+        finally { closeConnection(); }
+    }
+
+    public int getLatestTargetCaloriesByMember(int memberId)
+    {
+        try
+        {
+            openConnection();
+            string query = "SELECT TOP 1 targetCalories FROM FitnessGoal WHERE memberId=@memberId ORDER BY createdDate DESC";
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@memberId", memberId);
+            object result = cmd.ExecuteScalar();
+            if (result == null || result == DBNull.Value) return 0;
+            return Convert.ToInt32(result);
+        }
+        catch (Exception ex) { throw new Exception("Latest goal error: " + ex.Message); }
         finally { closeConnection(); }
     }
 
